@@ -60,15 +60,16 @@ def clean_build_directory(project_path: str, build_directory: str = "build"):
         shutil.rmtree(build_dir)
 
 
-def rm_temp_directory(temp_dir: str):
-    shutil.rmtree(temp_dir, onerror = redo_with_write)
-
-def redo_with_write(redo_func, path, err):
+def redo_with_write(redo_func, path, _):
     if not os.access(path, os.W_OK):
         os.chmod(path, stat.S_IWRITE)
         redo_func(path)
     else:
         raise
+
+
+def rm_temp_directory(temp_dir: str):
+    shutil.rmtree(temp_dir, onexc = redo_with_write)
 
 
 def apply_mutation(mutation: Mutation, working_directory):
