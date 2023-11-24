@@ -38,8 +38,10 @@ class FoundryTester(FoundryCore, MochaStdoutTester):
         if keep_test_names:
             _set_include_tests(self.directory, keep_test_names)
 
-    def build_test_command(self, network: Optional[str]) -> List[str]:
+    def build_test_command(self, network: Optional[str], force_recompile: bool = False) -> List[str]:
         result = self.foundry_command + ['test', '--json']
         # if network:
         #     result.extend(['--network', network])
+        if force_recompile:
+            result.append('--force')
         return result
