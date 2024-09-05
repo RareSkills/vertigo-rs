@@ -7,6 +7,17 @@ This tool will mutate files in `src/` and run `forge test` to see if the mutant 
 
 You do not need to specify that you are in a foundry project, the presence of a `foundry.toml` file will signify to this tool that you are in a foundry repo. If you have configuration files for truffle or hardhat in your project, this tool will get confused. You can temporarily change their names.
 
+### Update foundry.toml
+Add the line `ast = true` below `[profile.default]`. Here is an example
+```toml
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+ast = true # add this line
+```
+
+### Running the tool
 ```bash
 git clone https://github.com/RareSkills/vertigo-rs
 cd vertigo-rs
