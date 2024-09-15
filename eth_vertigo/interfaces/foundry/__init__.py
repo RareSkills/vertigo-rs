@@ -29,7 +29,7 @@ class FoundryCampaign(BaseCampaign):
         self.src_dir = src_dir
         self.exclude_regex = exclude_regex
         self.scope_file = scope_file
-        compiler = FoundryCompiler(foundry_command)
+        compiler = FoundryCompiler(foundry_command, src_dir)
         tester = FoundryTester(foundry_command, str(project_directory), compiler)
         source_file_builder = lambda ast, full_path: FoundrySourceFile(ast, full_path)
         super().__init__(

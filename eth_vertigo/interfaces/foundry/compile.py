@@ -10,8 +10,14 @@ from pathlib import Path
 from loguru import logger
 import json
 
+from typing import List
+
 
 class FoundryCompiler(Compiler, FoundryCore):
+    def __init__(self, foundry_command: List[str], src_dir: str):
+        super().__init__(foundry_command)
+        self.src_dir = src_dir
+
     def run_compilation(self, working_directory: str) -> None:
         with TemporaryFile() as stdin, TemporaryFile() as stdout,  TemporaryFile() as stderr:
             stdin.seek(0)
@@ -57,7 +63,7 @@ class FoundryCompiler(Compiler, FoundryCore):
         # directory is the out/ directory
         # src_files is the list of files in the src directory
         def explore_contracts(directory: Path):
-            src_files = [f.name for f in (w_dir / "src").iterdir() if f.is_file()]
+            src_files = [f.name for f in (w_dir / self.src_dir).iterdir() if f.is_file()]
             for item in directory.iterdir():
                 if item.name in src_files and item.name.endswith(".sol") and not item.name.endswith(".t.sol") and not "test" in item.name:
                     contract_directories.append(item)
