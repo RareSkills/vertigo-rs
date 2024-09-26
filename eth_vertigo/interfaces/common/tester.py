@@ -4,6 +4,8 @@ from pathlib import Path
 from tempfile import mkdtemp
 from distutils.dir_util import copy_tree
 import shutil
+import os
+import stat
 
 from eth_vertigo.core import Mutation
 from eth_vertigo.test_runner.file_editor import FileEditor
@@ -68,7 +70,14 @@ def clean_build_directory(project_path: str, build_directory: str = "build"):
 
 
 def rm_temp_directory(temp_dir: str):
-    shutil.rmtree(temp_dir)
+    shutil.rmtree(temp_dir, onerror = redo_with_write)
+
+def redo_with_write(redo_func, path, err):
+    if not os.access(path, os.W_OK):
+        os.chmod(path, stat.S_IWRITE)
+        redo_func(path)
+    else:
+        raise
 
 
 def apply_mutation(mutation: Mutation, working_directory):
