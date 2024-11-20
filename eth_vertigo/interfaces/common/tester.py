@@ -106,11 +106,15 @@ class MochaStdoutTester(Tester):
 
         if mutation:
             apply_mutation(mutation, temp_dir)
+
+        # only force recompilation when validating the project to get a baseline
+        force_recompile = False if mutation else True
+
         try:
             if original_bytecode is not None and original_bytecode != {}:
                 if self.compiler.check_bytecodes(temp_dir, original_bytecode):
                     raise EquivalentMutant
-            test_command = self.build_test_command(network)
+            test_command = self.build_test_command(network, force_recompile=force_recompile)
             result = self.run_test_command(test_command, temp_dir, timeout=timeout)
         finally:
             rm_temp_directory(temp_dir)
@@ -122,21 +126,20 @@ class MochaStdoutTester(Tester):
         pass
 
     @abstractmethod
-    def build_test_command(self, network: str):
+    def build_test_command(self, network: str, force_recompile: bool = False):
         pass
 
     @staticmethod
     def run_test_command(
             command: str,
             working_directory: str,
-            timeout=None
+            timeout: int = 600
     ) -> Union[Dict[str, TestResult], None]:
         with TemporaryFile() as stdin, TemporaryFile() as stdout:
             stdin.seek(0)
             proc = Popen(command, stdin=stdin, stdout=stdout, stderr=stdout, cwd=working_directory)
             try:
-                #TODO: timeout defaults to zero for some reason
-                proc.wait(timeout=1000000)
+                proc.wait(timeout=timeout)
             except TimeoutExpired:
                 proc.kill()
                 raise TimedOut

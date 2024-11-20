@@ -36,7 +36,8 @@ class HardhatTester(HardhatCore, MochaStdoutTester):
         if keep_test_names:
             _set_include_tests(self.directory, keep_test_names)
 
-    def build_test_command(self, network: Optional[str]) -> List[str]:
+    def build_test_command(self, network: Optional[str], force_recompile: bool = False) -> List[str]:
+        # todo - support `force_recompile`
         result = self.hardhat_command + ['test']
         # if network:
         #     result.extend(['--network', network])

@@ -193,7 +193,7 @@ def run(
             click.echo("[-] We couldn't get valid results by running the tests.\n Aborting")
             return
 
-        click.echo("[+] The project is valid")
+        click.echo(f"[+] The project is valid (took {round(campaign.base_run_time, 2)} seconds)")
         click.echo("[*] Storing compilation results")
         campaign.store_compilation_results()
         click.echo("[*] Running analysis on {} mutants".format(len(campaign.mutations)))
